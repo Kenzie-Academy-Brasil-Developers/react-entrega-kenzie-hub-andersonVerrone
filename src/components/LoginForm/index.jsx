@@ -10,11 +10,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginFormSchema } from "./loginFormSchema";
 import { api } from "../../services/api";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
-const LoginForm = ()=>{
+const LoginForm = ({setUser})=>{
     const[isLoading, setIsLoading] = useState(false)
-    const { register, handleSubmit, formState: {errors}} = useForm({
+
+    const { register, handleSubmit, formState: {errors}, reset} = useForm({
         resolver: zodResolver(loginFormSchema),
     });
     const navigate = useNavigate();
@@ -22,36 +23,42 @@ const LoginForm = ()=>{
     const submit = async (formData) => {
         setIsLoading(true);
         try {
-            const response = await api.post("/sessions",formData);
-            console.log(response);
-            toast.success("Login realizado com sucesso!",{
-                position: "top-right",
-                autoClose: 1000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                });
-            setIsLoading(false);
-            reset();
-        }catch (error) {
-            toast.error("Ops! Algo deu errado",{
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                });
-            setIsLoading(false);
-        } finally {
-            setTimeout(() => {navigate("/")},2000)
+          const response = await api.post("/sessions", formData);
+          toast.success("Conta criada com sucesso!", {
+            position: "top-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          setIsLoading(false);
+          reset();
+          localStorage.setItem("@TOKEN", response.data.token);
+          localStorage.setItem("@USERID", response.data.user.id);
+          setUser([response.data.user])
+          setTimeout(() => {
+            navigate("/home");
+          }, 2000);
+        } catch (error) {
+            console.log(error);
+          toast.error("Ops! Algo deu errado", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          setIsLoading(false);
         }
-    }
+      };
+
+
 
     return (
         <>
@@ -84,7 +91,6 @@ const LoginForm = ()=>{
                     <StyledButtonSecond type="button">Cadastre-se</StyledButtonSecond>
                 </Link>
             </StyledLoginForm>
-            <ToastContainer />
         </>
     )
 }
