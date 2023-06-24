@@ -20,9 +20,15 @@ export const StyledButtonMain = styled(Button)`
         background: var(--color-main-focus); 
         border: 1.2182px solid var(--color-main-focus);
     }
-    .negative {
-        background: var(--color-main-negative);
-        border: 1.2182px solid var(--color-main-negative);
+`
+
+export const StyledButtonMainNegative = styled(Button)`
+    
+    background: var(--color-main-negative);
+    border: 1.2182px solid var(--color-main-negative);
+    &:hover {
+        background: var(--color-main-focus); 
+        border: 1.2182px solid var(--color-main-focus);
     }
 `
 

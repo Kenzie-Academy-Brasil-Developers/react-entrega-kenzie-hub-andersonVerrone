@@ -1,21 +1,21 @@
-import { Route, Routes } from "react-router-dom"
-import HomePage from "../pages/HomePage"
-import LoginPage from "../pages/LoginPage"
-import RegisterPage from "../pages/RegisterPage"
-import { useEffect, useState } from "react"
+import { Route, Routes } from "react-router-dom";
+import HomePage from "../pages/HomePage";
+import LoginPage from "../pages/LoginPage";
+import RegisterPage from "../pages/RegisterPage";
+import PublicRoutes from "./PublicRoutes";
+import ProtectedRoutes from "./ProtectedRoutes";
 
 export const RoutesMain = () => {
-    const [user,setUser] = useState({});
-
-    useEffect(() => {
-        console.log(user)
-    },[user])
 
     return(
         <Routes>
-            <Route path="/" element={<LoginPage setUser={setUser} />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/home" element={<HomePage user={user} />} />
+            <Route element={<PublicRoutes />}>
+                <Route index element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+            </Route>
+            <Route element={<ProtectedRoutes />}>
+                <Route path="/home" element={<HomePage/>} />
+            </Route>
         </Routes>
     )
 }

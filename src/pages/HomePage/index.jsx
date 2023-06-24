@@ -1,38 +1,43 @@
 import { StyledHomePageContainer, StyledHomePageHeader, StyledHomePageUserContainer } from "./styles";
 import logo from "../../assets/img/logo.svg";
 import { StyledButtonExit } from "../../styles/button";
-import { StyledTypography } from "../../styles/typography";
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import HeaderHome  from "../../components/HeaderHome";
+import { useContext, useEffect } from "react";
+import { UserContext } from "../../providers/UserContext";
+import TechContainer from "../../components/TechContainer";
+import { TechContext } from "../../providers/TechContext";
+import ModalEdit from "../../components/ModalEdit";
+import ModalCreate from "../../components/ModalCreate";
 
 
-const HomePage = ({user}) => {
+const HomePage = () => {
 
+    const { userLogout } = useContext(UserContext);
+    const { loadTech, modalEditOpen, modalCreateOpen } = useContext(TechContext);
+    
+    
+    useEffect(() => {
+        loadTech();
+    },[])
+ 
     return (
         <>
             <StyledHomePageHeader>
                 <StyledHomePageContainer>
                     <img src={logo} alt="Logo Kenzie Hub" />
-                    <Link to={"/"} onClick={() => {localStorage.clear()}}> 
-                        <StyledButtonExit>
-                            Sair
-                        </StyledButtonExit>
-                    </Link>
+                    <StyledButtonExit onClick={() => {userLogout()}}>
+                        Sair
+                    </StyledButtonExit>
                 </StyledHomePageContainer>
             </StyledHomePageHeader>
             <StyledHomePageUserContainer>
-                <StyledHomePageContainer>
-                    <StyledTypography typographyStyle="title1">
-                        Olá, {user[0].name}
-                    </StyledTypography>
-                    <StyledTypography typographyStyle="headlineBold" color="#868E96">
-                        {user[0].course_module}
-                    </StyledTypography>
-                </StyledHomePageContainer>
+                <HeaderHome />
             </StyledHomePageUserContainer>
             <StyledHomePageContainer>
-
+                <TechContainer />
             </StyledHomePageContainer>
+            {modalEditOpen ? <ModalEdit /> : null};
+            {modalCreateOpen ? <ModalCreate /> : null}
         </>
     )
 }

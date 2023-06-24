@@ -5,60 +5,25 @@ import { StyledLoginForm } from "./styles";
 import { StyledTypography } from "../../styles/typography";
 import { StyledButtonMain } from "../../styles/button";
 import { StyledButtonSecond } from "../../styles/button";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginFormSchema } from "./loginFormSchema";
-import { api } from "../../services/api";
-import { toast } from "react-toastify";
+import { useContext, useState } from "react";
+import { UserContext } from "../../providers/UserContext";
+// import { toast } from "react-toastify";
 
-const LoginForm = ({setUser})=>{
-    const[isLoading, setIsLoading] = useState(false)
+const LoginForm = ()=>{
+    const [isLoading,setIsLoading] = useState(false);
 
-    const { register, handleSubmit, formState: {errors}, reset} = useForm({
+    const { register, handleSubmit, formState: {errors}} = useForm({
         resolver: zodResolver(loginFormSchema),
     });
-    const navigate = useNavigate();
 
-    const submit = async (formData) => {
-        setIsLoading(true);
-        try {
-          const response = await api.post("/sessions", formData);
-          toast.success("Conta criada com sucesso!", {
-            position: "top-right",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-          setIsLoading(false);
-          reset();
-          localStorage.setItem("@TOKEN", response.data.token);
-          localStorage.setItem("@USERID", response.data.user.id);
-          setUser([response.data.user])
-          setTimeout(() => {
-            navigate("/home");
-          }, 2000);
-        } catch (error) {
-            console.log(error);
-          toast.error("Ops! Algo deu errado", {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-          setIsLoading(false);
-        }
-      };
+    const { userLogin } = useContext(UserContext);
 
-
+    const submit = (formData) => {
+      userLogin(formData, setIsLoading);
+    }
 
     return (
         <>

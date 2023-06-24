@@ -3,74 +3,27 @@ import { StyledTypography } from "../../styles/typography";
 import Input from "../Input";
 import { StyledRegisterForm } from "./styles";
 import InputPassword from "../InputPassword";
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import Select from "../Select";
 import { StyledButtonMain } from "../../styles/button";
 import { registerFormSchema } from "./registerFormSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { api } from "../../services/api";
-import {  toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../providers/UserContext";
 
 const RegisterForm = () => {
-  const [optionsItem, setOptionsItem] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading,setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    reset,
+    formState: { errors }
   } = useForm({
     resolver: zodResolver(registerFormSchema),
   });
-  const navigate = useNavigate();
+  const { optionsItem , userRegister } = useContext(UserContext);
 
   const submit = async (formData) => {
-    setIsLoading(true);
-    try {
-      const response = await api.post("/users", formData);
-      console.log(response);
-      toast.success("Conta criada com sucesso!", {
-        position: "top-right",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-      setIsLoading(false);
-      reset();
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
-    } catch (error) {
-      toast.error("Ops! Algo deu errado", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-      setIsLoading(false);
-    }
+    userRegister(formData,setIsLoading);
   };
-
-  useEffect(() => {
-    const addOptions = () => {
-      setOptionsItem([
-        "Primeiro módulo (Introdução ao Frontend)",
-        "Segundo módulo (Frontend Avançado)",
-        "Terceiro módulo (Introdução ao Backend)",
-        "Quarto módulo (Backend Avançado)",
-      ]);
-    };
-    addOptions();
-  }, []);
 
   return (
     <>
